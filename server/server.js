@@ -4,6 +4,7 @@ const express=require('express');
 const socketIO=require('socket.io');
 
 const {generateMessage,generateLocationMessage} =require('./utils/message');
+const {isRealString} = require('./utils/validation');
 const app=express();
 const publicPath=path.join(__dirname,'..','public');
 const port=process.env.PORT||3000
@@ -31,6 +32,11 @@ io.on('connection',(socket)=>{
     })
     socket.on('disconnect',()=>{
         console.log('server is disconnected');
+    })
+    socket.on('join',(params,callback)=>{
+        if(!isRealString(params.name)||!isRealString(params.room)){
+            callback('room and roomname is required');
+        }
     })
 })
 server.listen(port,()=>{
